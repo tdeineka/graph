@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>graph builder</title>
+<script>
+var E   = Math.E
+  , PI  = Math.PI
+  , max = Math.max
+  , min = Math.min
+  , abs = Math.abs
+  , floor = Math.floor
+  , ceil = Math.ceil
+  , round = Math.round
+  , sqrt = Math.sqrt
+  , pow = Math.pow
+  , exp = Math.exp
+  , log = Math.log
+  , ln  = Math.log
+  , sin = Math.sin
+  , cos = Math.cos
+  , tan = Math.tan
+  , tg  = Math.tan
+  , asin = Math.asin
+  , acos = Math.acos
+  , arcsin = Math.asin
+  , arccos = Math.acos
+  , atan = Math.atan
+  , arctg = Math.atan
+  ;
+var from, to;
+function output (form) {
+    var c
+      , t = ''
+      , a = []
+      ;
+    var out = document.getElementById ('out');
+    while (c = out.firstChild)
+        out.removeChild (c);
+
+    from = Number (form.from.value);
+    to = Number (form.to.value);
+    var step = Number (form.step.value);
+    var f = new Function ('x','return '+ form.function.value +';');
+    for (var x = from; x <= to; x += step) {
+        var p = [x, f(x)];
+        var xy = convert (p);
+        t += x +'\t '+ f (x)+'\t '+ xy[0] +'\t '+ xy[1] +'\n';
+        a.push (p);
+    }
+    out.appendChild (document.createTextNode (t));
+
+    var canvas = document.getElementById ("canvas");
+    var context = canvas.getContext ("2d");
+    context.clearRect(0, 0, 600, 600);
+    context.beginPath();
+    var move = true;
+    for (var i in a) {
+        var xy = a[i]
+          , y = xy[1]
+          , p = convert (xy)
+          ;
+        if (y==Infinity || y==-Infinity || isNaN (y)) {
+            move = true;
+        } else if (move) {
+            context.moveTo (p[0], p[1]);
+            move = false;
+        } else {
+            context.lineTo (p[0], p[1]);
+        }
+    }
+    context.stroke();
+}
+function convert (p) {
+    var X = 600
+      , Y = 600
+      , len = to - from
+      ;
+    return [ (X * (p[0] - from) / len)|0, (Y * (len/2 - p[1]) / len)|0 ];
+}
+</script>
+</head>
+<body>
+<canvas id=canvas width=600 height=600 style="display:block;float:right;margin:15px;border:1px solid #9C9898;">your browser do not support canvas</canvas>
+<div style=display:block;float:left;border:1px;bgcolor:blue;width:30%;>
+<form>
+<table width=100%>
+<tr><td valign=top>
+function <textarea name=function rows=3>x*x-2</textarea>
+</td></tr>
+<tr><td>
+from <input size=4 name=from value=-3.0>
+to <input size=4 name=to value=3.0>
+step <input size=4 name=step value=0.125>
+</td></tr>
+<tr><td>
+<button type=button onclick=output(this.form)>build</button>
+</td></tr>
+</table>
+</form>
+<pre id=out></pre>
+</div>
+</body>
+</html>
